@@ -13,6 +13,7 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class EclipseInstrumentationV3 extends TypeInstrumentation {
             }
             if (ContextManager.needRecordOrReplay()){
                 Mocker mocker = MQTTAdapterHelper.createMocker(topic);
-                mocker.getTargetRequest().getAttributes();
+                mocker.getTargetRequest().setBody(Base64.getEncoder().encodeToString(mqttMessage.getPayload()));
                 if (ContextManager.needReplay()) {
                     MockUtils.replayMocker(mocker);
                 } else if (ContextManager.needRecord()) {
